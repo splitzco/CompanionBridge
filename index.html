@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CompanionBridge — No One Should Age Alone</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --forest: #1B4332;
+    --forest-mid: #2D6A4F;
+    --forest-light: #40916C;
+    --sage: #74C69D;
+    --sage-pale: #D8F3DC;
+    --cream: #FDFBF7;
+    --warm-white: #F8F4EE;
+    --amber: #E9820C;
+    --amber-pale: #FEF3C7;
+    --charcoal: #1C1917;
+    --stone: #78716C;
+    --stone-light: #D6D3D1;
+    --radius: 16px;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--charcoal);
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.1rem 5%;
+    background: rgba(253,251,247,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(27,67,50,0.08);
+  }
+  .nav-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem; font-weight: 700;
+    color: var(--forest);
+    letter-spacing: -0.02em;
+  }
+  .nav-logo span { color: var(--amber); }
+  .nav-links { display: flex; gap: 2rem; list-style: none; }
+  .nav-links a { text-decoration: none; color: var(--stone); font-size: 0.9rem; font-weight: 500; transition: color 0.2s; }
+  .nav-links a:hover { color: var(--forest); }
+  .nav-cta {
+    background: var(--forest); color: #fff;
+    padding: 0.6rem 1.4rem; border-radius: 100px;
+    text-decoration: none; font-size: 0.875rem; font-weight: 500;
+    transition: background 0.2s, transform 0.15s;
+  }
+  .nav-cta:hover { background: var(--forest-mid); transform: translateY(-1px); }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex; align-items: center;
+    padding: 8rem 5% 5rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-bg {
+    position: absolute; inset: 0; z-index: 0;
+    background: radial-gradient(ellipse 80% 60% at 70% 40%, var(--sage-pale) 0%, transparent 65%),
+                radial-gradient(ellipse 50% 50% at 20% 80%, var(--amber-pale) 0%, transparent 60%),
+                var(--cream);
+  }
+  .hero-content { position: relative; z-index: 1; max-width: 680px; }
+  .hero-eyebrow {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    background: var(--sage-pale); color: var(--forest-mid);
+    padding: 0.4rem 1rem; border-radius: 100px;
+    font-size: 0.8rem; font-weight: 500; letter-spacing: 0.05em;
+    text-transform: uppercase; margin-bottom: 1.8rem;
+    border: 1px solid rgba(64,145,108,0.2);
+  }
+  .hero-eyebrow::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--forest-light); }
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.8rem, 5vw, 4.2rem);
+    line-height: 1.15; font-weight: 700;
+    color: var(--charcoal); margin-bottom: 1.4rem;
+    letter-spacing: -0.02em;
+  }
+  .hero h1 em { font-style: italic; color: var(--forest); }
+  .hero p {
+    font-size: 1.15rem; color: var(--stone);
+    max-width: 520px; margin-bottom: 2.4rem;
+    font-weight: 300; line-height: 1.75;
+  }
+  .hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; }
+  .btn-primary {
+    background: var(--forest); color: #fff;
+    padding: 0.85rem 2rem; border-radius: 100px;
+    text-decoration: none; font-size: 0.95rem; font-weight: 500;
+    transition: all 0.2s; display: inline-block;
+    box-shadow: 0 4px 20px rgba(27,67,50,0.25);
+  }
+  .btn-primary:hover { background: var(--forest-mid); transform: translateY(-2px); box-shadow: 0 8px 28px rgba(27,67,50,0.3); }
+  .btn-secondary {
+    color: var(--forest); font-size: 0.95rem; font-weight: 500;
+    text-decoration: none; display: inline-flex; align-items: center; gap: 0.4rem;
+    padding: 0.85rem 1.4rem; border-radius: 100px;
+    border: 1.5px solid rgba(27,67,50,0.25);
+    transition: all 0.2s;
+  }
+  .btn-secondary:hover { border-color: var(--forest); background: rgba(27,67,50,0.04); }
+  .hero-stat-row {
+    display: flex; gap: 2.5rem; margin-top: 4rem;
+    padding-top: 2.5rem; border-top: 1px solid var(--stone-light);
+  }
+  .hero-stat-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem; font-weight: 700; color: var(--forest);
+    line-height: 1;
+  }
+  .hero-stat-label { font-size: 0.8rem; color: var(--stone); margin-top: 0.3rem; line-height: 1.4; }
+
+  /* PROBLEM */
+  .problem {
+    background: var(--forest);
+    padding: 6rem 5%;
+    position: relative; overflow: hidden;
+  }
+  .problem::before {
+    content: '"';
+    position: absolute; top: -2rem; left: 3%;
+    font-family: 'Playfair Display', serif;
+    font-size: 20rem; color: rgba(255,255,255,0.04);
+    line-height: 1; pointer-events: none;
+  }
+  .problem-inner { max-width: 900px; margin: 0 auto; position: relative; }
+  .section-label {
+    font-size: 0.75rem; font-weight: 500; letter-spacing: 0.12em;
+    text-transform: uppercase; margin-bottom: 1.5rem;
+  }
+  .problem .section-label { color: var(--sage); }
+  .problem h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 4vw, 3rem);
+    color: #fff; line-height: 1.25; margin-bottom: 1.5rem;
+    letter-spacing: -0.02em;
+  }
+  .problem h2 em { font-style: italic; color: var(--sage); }
+  .problem-body { font-size: 1.05rem; color: rgba(255,255,255,0.65); line-height: 1.8; max-width: 620px; margin-bottom: 3.5rem; }
+  .problem-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.25rem; }
+  .problem-card {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: var(--radius); padding: 1.5rem;
+  }
+  .problem-card-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.4rem; font-weight: 700;
+    color: var(--sage); line-height: 1; margin-bottom: 0.5rem;
+  }
+  .problem-card p { font-size: 0.875rem; color: rgba(255,255,255,0.6); line-height: 1.6; }
+
+  /* HOW IT WORKS */
+  .how { padding: 7rem 5%; background: var(--warm-white); }
+  .how-inner { max-width: 1100px; margin: 0 auto; }
+  .section-header { text-align: center; margin-bottom: 4rem; }
+  .section-header .section-label { color: var(--forest-light); display: block; margin-bottom: 1rem; }
+  .section-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 4vw, 2.8rem);
+    color: var(--charcoal); letter-spacing: -0.02em; line-height: 1.2;
+  }
+  .section-header p { color: var(--stone); font-size: 1.05rem; margin-top: 0.8rem; max-width: 480px; margin-left: auto; margin-right: auto; }
+  .persona-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
+  .persona-card {
+    background: var(--cream);
+    border: 1px solid var(--stone-light);
+    border-radius: var(--radius); padding: 2rem;
+    transition: transform 0.2s, box-shadow 0.2s;
+    position: relative; overflow: hidden;
+  }
+  .persona-card:hover { transform: translateY(-4px); box-shadow: 0 16px 40px rgba(0,0,0,0.08); }
+  .persona-card::before {
+    content: ''; position: absolute;
+    top: 0; left: 0; right: 0; height: 4px;
+  }
+  .persona-card.senior::before { background: var(--forest); }
+  .persona-card.family::before { background: var(--amber); }
+  .persona-card.volunteer::before { background: var(--sage); }
+  .persona-icon {
+    width: 52px; height: 52px; border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.5rem; margin-bottom: 1.2rem;
+  }
+  .senior .persona-icon { background: var(--sage-pale); }
+  .family .persona-icon { background: var(--amber-pale); }
+  .volunteer .persona-icon { background: #E8F4F8; }
+  .persona-role { font-size: 0.75rem; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--stone); margin-bottom: 0.4rem; }
+  .persona-card h3 { font-size: 1.3rem; font-weight: 500; color: var(--charcoal); margin-bottom: 0.8rem; }
+  .persona-card p { font-size: 0.9rem; color: var(--stone); line-height: 1.7; margin-bottom: 1.2rem; }
+  .persona-features { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
+  .persona-features li {
+    font-size: 0.875rem; color: var(--charcoal);
+    display: flex; align-items: center; gap: 0.6rem;
+  }
+  .persona-features li::before {
+    content: ''; width: 6px; height: 6px;
+    border-radius: 50%; flex-shrink: 0;
+  }
+  .senior .persona-features li::before { background: var(--forest); }
+  .family .persona-features li::before { background: var(--amber); }
+  .volunteer .persona-features li::before { background: var(--forest-light); }
+
+  /* FEATURES */
+  .features { padding: 7rem 5%; background: var(--cream); }
+  .features-inner { max-width: 1100px; margin: 0 auto; }
+  .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem; margin-top: 4rem; }
+  .feature-card {
+    padding: 1.75rem; border-radius: var(--radius);
+    border: 1px solid var(--stone-light);
+    background: var(--warm-white);
+    transition: border-color 0.2s;
+  }
+  .feature-card:hover { border-color: var(--sage); }
+  .feature-icon {
+    width: 44px; height: 44px; border-radius: 12px;
+    background: var(--sage-pale);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.25rem; margin-bottom: 1rem;
+  }
+  .feature-card h4 { font-size: 1rem; font-weight: 500; color: var(--charcoal); margin-bottom: 0.5rem; }
+  .feature-card p { font-size: 0.875rem; color: var(--stone); line-height: 1.65; }
+
+  /* VALIDATION CTA */
+  .validation {
+    background: var(--amber-pale);
+    border-top: 1px solid rgba(233,130,12,0.2);
+    border-bottom: 1px solid rgba(233,130,12,0.2);
+    padding: 5rem 5%;
+  }
+  .validation-inner { max-width: 760px; margin: 0 auto; text-align: center; }
+  .validation .section-label { color: var(--amber); display: block; margin-bottom: 1rem; }
+  .validation h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+    color: var(--charcoal); margin-bottom: 1rem;
+    letter-spacing: -0.02em;
+  }
+  .validation p { color: var(--stone); font-size: 1.05rem; line-height: 1.75; margin-bottom: 2.5rem; }
+  .who-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.75rem; margin-bottom: 2.5rem; }
+  .who-pill {
+    background: #fff; border: 1px solid rgba(233,130,12,0.25);
+    border-radius: 100px; padding: 0.6rem 1rem;
+    font-size: 0.85rem; color: var(--charcoal); font-weight: 400;
+  }
+
+  /* FOOTER */
+  footer {
+    background: var(--charcoal); padding: 3rem 5%;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 1rem;
+  }
+  .footer-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem; color: #fff; font-weight: 700;
+  }
+  .footer-logo span { color: var(--sage); }
+  footer p { font-size: 0.8rem; color: rgba(255,255,255,0.35); }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .hero-eyebrow { animation: fadeUp 0.6s ease both; }
+  .hero h1 { animation: fadeUp 0.6s 0.1s ease both; }
+  .hero p { animation: fadeUp 0.6s 0.2s ease both; }
+  .hero-actions { animation: fadeUp 0.6s 0.3s ease both; }
+  .hero-stat-row { animation: fadeUp 0.6s 0.4s ease both; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">Companion<span>Bridge</span></div>
+  <ul class="nav-links">
+    <li><a href="#how">How it works</a></li>
+    <li><a href="#features">Features</a></li>
+    <li><a href="#validation">Get involved</a></li>
+  </ul>
+  <a href="#validation" class="nav-cta">Join the conversation</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">Early concept — seeking community input</div>
+    <h1>No one should<br><em>age alone.</em></h1>
+    <p>CompanionBridge connects isolated seniors with family members and local volunteers — through daily check-ins, companion visits, and community care coordination.</p>
+    <div class="hero-actions">
+      <a href="#how" class="btn-primary">See how it works</a>
+      <a href="#validation" class="btn-secondary">Help shape it →</a>
+    </div>
+    <div class="hero-stat-row">
+      <div>
+        <div class="hero-stat-num">11M+</div>
+        <div class="hero-stat-label">older Americans<br>living alone</div>
+      </div>
+      <div>
+        <div class="hero-stat-num">2×</div>
+        <div class="hero-stat-label">seniors 65+ will<br>double by 2050</div>
+      </div>
+      <div>
+        <div class="hero-stat-num">15×</div>
+        <div class="hero-stat-label">loneliness risk equals<br>15 cigarettes a day</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROBLEM -->
+<section class="problem" id="problem">
+  <div class="problem-inner">
+    <div class="section-label">The problem</div>
+    <h2>Isolation is a <em>public health crisis</em> hiding in plain sight.</h2>
+    <p class="problem-body">Aging populations are growing faster than our systems can support them. Existing solutions are either expensive clinical platforms or fragmented volunteer programs with no real technology backbone. There's a huge gap for something warm, simple, and community-driven.</p>
+    <div class="problem-cards">
+      <div class="problem-card">
+        <div class="problem-card-num">28%</div>
+        <p>of adults over 65 live alone in the United States</p>
+      </div>
+      <div class="problem-card">
+        <div class="problem-card-num">$6.7B</div>
+        <p>annual healthcare cost attributed to senior social isolation</p>
+      </div>
+      <div class="problem-card">
+        <div class="problem-card-num">50%</div>
+        <p>higher risk of dementia among chronically lonely older adults</p>
+      </div>
+      <div class="problem-card">
+        <div class="problem-card-num">↑ Daily</div>
+        <p>the need grows every single day as the population ages</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how" id="how">
+  <div class="how-inner">
+    <div class="section-header">
+      <span class="section-label">How it works</span>
+      <h2>One platform, three communities</h2>
+      <p>CompanionBridge serves seniors, their families, and local volunteers — each with their own tailored experience.</p>
+    </div>
+    <div class="persona-grid">
+      <div class="persona-card senior">
+        <div class="persona-icon">👴</div>
+        <div class="persona-role">For seniors</div>
+        <h3>Stay connected with ease</h3>
+        <p>Designed for large tablets with big buttons, high contrast, and simple navigation — built for the people who need it most.</p>
+        <ul class="persona-features">
+          <li>One-tap daily check-in with mood</li>
+          <li>Request a companion or errand helper</li>
+          <li>Browse local events and activities</li>
+          <li>SOS alert button for emergencies</li>
+          <li>Simple video calls with family</li>
+        </ul>
+      </div>
+      <div class="persona-card family">
+        <div class="persona-icon">👨‍👩‍👧</div>
+        <div class="persona-role">For families</div>
+        <h3>Peace of mind, from anywhere</h3>
+        <p>Stay in the loop on your loved one's wellbeing, even from across the country — with real alerts when it matters.</p>
+        <ul class="persona-features">
+          <li>Check-in history and wellness trends</li>
+          <li>Instant SMS if a check-in is missed</li>
+          <li>Schedule volunteers on their behalf</li>
+          <li>View upcoming visits and events</li>
+          <li>Direct messaging with caregivers</li>
+        </ul>
+      </div>
+      <div class="persona-card volunteer">
+        <div class="persona-icon">🤝</div>
+        <div class="persona-role">For volunteers</div>
+        <h3>Give your time where it counts</h3>
+        <p>Browse nearby seniors who need companionship, errands, or tech help — claim a time slot and make a real difference.</p>
+        <ul class="persona-features">
+          <li>Filter requests by type and distance</li>
+          <li>Claim visits and get reminders</li>
+          <li>Build a verified, rated profile</li>
+          <li>Background check verification badge</li>
+          <li>Tech tutoring match by skill set</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features" id="features">
+  <div class="features-inner">
+    <div class="section-header">
+      <span class="section-label">Features</span>
+      <h2>Everything built around <br>human connection</h2>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">✅</div>
+        <h4>Daily check-in system</h4>
+        <p>Seniors tap in each morning. Missed check-ins automatically alert family by SMS — no setup required.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🗓️</div>
+        <h4>Volunteer scheduling</h4>
+        <p>Post a need, get matched with a nearby verified volunteer. Companionship, errands, or tech help.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">💻</div>
+        <h4>Tech tutor matching</h4>
+        <p>Pair seniors with tech-savvy volunteers to learn video calling, email, and smartphone basics.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📅</div>
+        <h4>Local events feed</h4>
+        <p>Senior centers and community orgs post events — virtual and in-person — in one easy-to-browse feed.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🚨</div>
+        <h4>Emergency SOS</h4>
+        <p>One-tap emergency alert notifies the primary family contact instantly with the senior's location.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">⭐</div>
+        <h4>Volunteer ratings</h4>
+        <p>Seniors and families rate each visit, building trust and accountability into every interaction.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VALIDATION -->
+<section class="validation" id="validation">
+  <div class="validation-inner">
+    <span class="section-label">We want your input</span>
+    <h2>Help us build this right.</h2>
+    <p>CompanionBridge is in its earliest stage. Before writing a single line of code for the app, we want to talk to the people who understand this problem best — and that means you.</p>
+    <div class="who-grid">
+      <div class="who-pill">Area Agency on Aging staff</div>
+      <div class="who-pill">Senior center directors</div>
+      <div class="who-pill">Social workers</div>
+      <div class="who-pill">Families with aging parents</div>
+      <div class="who-pill">Volunteer coordinators</div>
+      <div class="who-pill">Faith community leaders</div>
+    </div>
+    <a href="mailto:info@companionbridge.com" class="btn-primary" style="font-size: 1rem; padding: 1rem 2.4rem;">Start a conversation →</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Companion<span>Bridge</span></div>
+  <p>Early concept — 2026 &nbsp;·&nbsp; Rockford, Michigan</p>
+  <p>Built with purpose by Shoëfware</p>
+</footer>
+
+</body>
+</html>
